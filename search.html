@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kết quả tìm kiếm – Hướng dẫn làm đẹp</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="app-header"></div>
+<section class="page-hero" style="padding:30px 20px 24px">
+  <div class="breadcrumb container">
+    <a href="index.html">Trang chủ</a><span>/</span>
+    <span id="breadcrumb-label">Tìm kiếm</span>
+  </div>
+</section>
+<div class="container">
+  <div class="two-col">
+    <main>
+      <div class="search-results-wrap">
+        <!-- Search bar on top -->
+        <div class="search-top-bar">
+          <input class="search-top-input" id="mainSearchInput" type="text" placeholder="Nhập từ khóa tìm kiếm..."/>
+          <button class="search-top-btn" onclick="doMainSearch()">🔍 Tìm kiếm</button>
+        </div>
+
+        <!-- Status message -->
+        <div id="search-status" class="search-query-info"></div>
+
+        <!-- Results list -->
+        <div id="search-results-list"></div>
+
+        <!-- Pagination -->
+        <div id="search-pagination" class="search-pagination"></div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-header">🔥 Tìm kiếm phổ biến</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px">
+          <span class="search-tag" onclick="setSearch('da dầu mụn')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">da dầu mụn</span>
+          <span class="search-tag" onclick="setSearch('kem chống nắng')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">kem chống nắng</span>
+          <span class="search-tag" onclick="setSearch('kiểu tóc 2026')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">kiểu tóc 2026</span>
+          <span class="search-tag" onclick="setSearch('son lì')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">son lì</span>
+          <span class="search-tag" onclick="setSearch('nail đẹp')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">nail đẹp</span>
+          <span class="search-tag" onclick="setSearch('serum niacinamide')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">serum niacinamide</span>
+          <span class="search-tag" onclick="setSearch('cushion')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">cushion</span>
+          <span class="search-tag" onclick="setSearch('chăm sóc tóc')" style="cursor:pointer;background:var(--pink-light);color:var(--pink);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600">chăm sóc tóc</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="app-footer"></div>
+<script src="shared.js"></script>
+<script>
+renderHeader('');
+renderFooter();
+
+let currentQuery = '';
+let currentPage = 1;
+const PER_PAGE = 10;
+
+function getQueryParam(name) {
+  return new URLSearchParams(window.location.search).get(name) || '';
+}
+
+function highlightText(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(escaped, 'gi'), m => `<span class="search-highlight">${m}</span>`);
+}
+
+async function doSearch(query, page = 1) {
+  if (!query || !query.trim()) {
+    document.getElementById('search-status').textContent = 'Vui lòng nhập từ khóa tìm kiếm.';
+    return;
+  }
+  currentQuery = query.trim();
+  currentPage = page;
+
+  // Update URL without reload
+  const url = new URL(window.location.href);
+  url.searchParams.set('q', currentQuery);
+  url.searchParams.set('page', page);
+  window.history.replaceState({}, '', url);
+
+  // Update input
+  document.getElementById('mainSearchInput').value = currentQuery;
+  document.getElementById('breadcrumb-label').textContent = `Tìm: "${currentQuery}"`;
+  document.title = `Tìm kiếm "${currentQuery}" – Hướng dẫn làm đẹp`;
+
+  const statusEl = document.getElementById('search-status');
+  const listEl   = document.getElementById('search-results-list');
+  const pageEl   = document.getElementById('search-pagination');
+
+  statusEl.innerHTML = '⏳ Đang tìm kiếm...';
+  listEl.innerHTML   = '';
+  pageEl.innerHTML   = '';
+
+  try {
+    const offset = (page - 1) * PER_PAGE;
+    const res = await fetch(`/api/posts?q=${encodeURIComponent(currentQuery)}&limit=${PER_PAGE}&offset=${offset}`);
+    const data = await res.json();
+
+    if (!data.posts || data.posts.length === 0) {
+      statusEl.innerHTML = `Không tìm thấy kết quả nào cho <strong>"${currentQuery}"</strong>`;
+      listEl.innerHTML = `
+        <div class="search-no-result">
+          <div class="icon">🔍</div>
+          <h3>Không có kết quả</h3>
+          <p>Thử tìm với từ khóa khác hoặc chọn gợi ý bên phải.</p>
+        </div>`;
+      return;
+    }
+
+    statusEl.innerHTML = `Tìm thấy <strong>${data.total}</strong> kết quả cho <strong>"${currentQuery}"</strong>`;
+
+    listEl.innerHTML = data.posts.map(p => {
+      const title   = highlightText(p.title || '', currentQuery);
+      const excerpt = highlightText((p.excerpt || '').slice(0, 140), currentQuery);
+      const img     = p.cover_image
+        ? `<img src="/${p.cover_image}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=no-img>📝</div>'">`
+        : `<div class="no-img">📝</div>`;
+      const date    = p.created_at ? p.created_at.slice(0, 10) : '';
+      return `
+        <div class="search-result-item">
+          <div class="search-result-img">${img}</div>
+          <div class="search-result-body">
+            <div class="search-result-cat">${p.category || ''}</div>
+            <a href="${p.slug}.html" class="search-result-title">${title}</a>
+            <div class="search-result-excerpt">${excerpt}${p.excerpt && p.excerpt.length > 140 ? '...' : ''}</div>
+            <div class="card-meta" style="margin-top:8px"><span>📅 ${date}</span></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Pagination
+    const totalPages = Math.ceil(data.total / PER_PAGE);
+    if (totalPages > 1) {
+      let paginationHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        paginationHTML += `<span class="search-page-btn ${i === page ? 'active' : ''}" onclick="doSearch('${currentQuery.replace(/'/g,"\\'")}', ${i})">${i}</span>`;
+      }
+      pageEl.innerHTML = paginationHTML;
+    }
+
+  } catch(e) {
+    statusEl.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+    console.error(e);
+  }
+}
+
+function doMainSearch() {
+  const val = document.getElementById('mainSearchInput').value;
+  doSearch(val, 1);
+}
+
+function setSearch(kw) {
+  document.getElementById('mainSearchInput').value = kw;
+  doSearch(kw, 1);
+}
+
+// Enter key
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('mainSearchInput');
+  if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') doMainSearch(); });
+
+  // Auto-search from URL param
+  const q    = getQueryParam('q');
+  const page = parseInt(getQueryParam('page')) || 1;
+  if (q) {
+    doSearch(q, page);
+  } else {
+    document.getElementById('search-status').textContent = 'Nhập từ khóa để bắt đầu tìm kiếm.';
+  }
+});
+</script>
+</body>
+</html>

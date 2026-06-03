@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Liên hệ</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="app-header"></div>
+<section class="page-hero">
+<h1>📬 <em>Liên hệ</em> với chúng tôi</h1>
+<p>Chúng tôi luôn lắng nghe và sẵn sàng hỗ trợ bạn</p>
+</section>
+<div class="container" style="padding:50px 20px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1000px;margin:0 auto">
+<div class="article-detail">
+<div class="article-body">
+<h2>Thông tin liên hệ</h2>
+<div class="ingredient-feature" style="background:var(--pink-light);border-color:var(--border);margin-bottom:14px">
+<div class="icon">📧</div>
+<div><h4>Email</h4><p style="color:var(--gray)">hello@huongdanlamdep.vn</p></div>
+</div>
+<div class="ingredient-feature" style="background:var(--pink-light);border-color:var(--border);margin-bottom:14px">
+<div class="icon">📘</div>
+<div><h4>Facebook</h4><p style="color:var(--gray)">facebook.com/huongdanlamdep</p></div>
+</div>
+<div class="ingredient-feature" style="background:var(--pink-light);border-color:var(--border);margin-bottom:14px">
+<div class="icon">📸</div>
+<div><h4>Instagram</h4><p style="color:var(--gray)">@huongdanlamdep</p></div>
+</div>
+<div class="ingredient-feature" style="background:var(--pink-light);border-color:var(--border);margin-bottom:14px">
+<div class="icon">🎵</div>
+<div><h4>TikTok</h4><p style="color:var(--gray)">@huongdanlamdep</p></div>
+</div>
+<div class="tip-box" style="margin-top:24px">
+<strong>⏰ Thời gian phản hồi</strong>
+          Chúng tôi thường phản hồi trong vòng 24-48 giờ làm việc. Cảm ơn bạn đã liên hệ!
+        </div>
+</div>
+</div>
+<div class="article-detail">
+<div class="article-body">
+<h2>Gửi tin nhắn cho chúng tôi</h2>
+<p style="color:var(--gray);margin-bottom:20px">Bạn có câu hỏi về sản phẩm, muốn hợp tác hoặc đóng góp bài viết? Hãy để lại tin nhắn!</p>
+<div style="display:flex;flex-direction:column;gap:14px">
+<input placeholder="Họ và tên của bạn" style="padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none"/>
+<input placeholder="Email của bạn" style="padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none" type="email"/>
+<select style="padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;color:var(--gray)">
+<option>Chọn chủ đề...</option>
+<option>Hỏi về sản phẩm</option>
+<option>Hợp tác quảng cáo</option>
+<option>Đóng góp bài viết</option>
+<option>Báo lỗi nội dung</option>
+<option>Khác</option>
+</select>
+<textarea placeholder="Nội dung tin nhắn của bạn..." style="padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;min-height:130px;resize:vertical"></textarea>
+<button onclick="alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể. 🌸')" style="background:var(--pink);color:white;border:none;padding:14px;border-radius:8px;font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer">
+            📨 Gửi tin nhắn
+          </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="app-footer"></div>
+<script src="shared.js"></script>
+<script>renderHeader(''); renderFooter();</script>
+</body>
+</html>
